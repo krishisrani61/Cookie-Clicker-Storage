@@ -69,25 +69,25 @@
 <body>
 
 <div class="container">
-    <h2>Save File App</h2>
+    <h2>Cookie Clicker Save</h2>
 
-    <label for="fileInput">Select a File:</label>
+    <label for="fileInput">Open a File:</label>
     <input type="file" id="fileInput" accept=".ccsave">
 
-    <label for="description">Description:</label>
+    <label for="description">Comments:</label>
     <input type="text" id="description">
 
-    <label for="saveCode">Save File Code:</label>
+    <label for="saveCode">Save File:</label>
     <input type="text" id="saveCode">
 
     <button onclick="appendToSaveFile()">Append to File</button>
-    <button onclick="saveCopy()">Save Copy</button>
+    <button onclick="saveCopy()">Save File</button>
 
     <h3>File Content:</h3>
-    <button class="toggle-button" onclick="toggleFileContent()">Toggle File Entries</button>
+    <button class="toggle-button" onclick="toggleFileContent()">Toggle History</button>
     <ul id="fileContentList" class="hidden"></ul>
 
-    <h3>History:</h3>
+    <h3>To Be Amended:</h3>
     <ul id="historyList"></ul>
 </div>
 
