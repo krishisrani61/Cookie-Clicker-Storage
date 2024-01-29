@@ -1,42 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Save File Web App</title>
-<script>
-    function saveToFile() {
-        // Get user input
-        var description = document.getElementById("description").value;
-        var saveCode = document.getElementById("saveCode").value;
-        
-        // Generate timestamp
-        var timestamp = new Date().toLocaleString();
-        
-        // Format data
-        var data = description + " | " + saveCode + " | " + timestamp + "\n";
-        
-        // Save data to list of save codes
-        var saveList = document.getElementById("saveList");
-        saveList.value += data;
-        
-        // Save data to file
-        var blob = new Blob([saveList.value], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, "save_file.txt");
-    }
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save File Editor</title>
 </head>
 <body>
-    <h1>Save File Web App</h1>
-    <input type="file" id="fileInput">
+
+    <h1>Save File Editor</h1>
+
+    <label for="fileInput">Select a file:</label>
+    <input type="file" id="fileInput" accept=".txt" />
+    
     <br><br>
-    <label for="description">Description:</label><br>
-    <input type="text" id="description"><br>
-    <label for="saveCode">Save File Code:</label><br>
-    <input type="text" id="saveCode"><br>
+
+    <label for="descriptionInput">Description:</label>
+    <input type="text" id="descriptionInput" />
+
+    <br><br>
+
+    <label for="saveCodeInput">Save File Code:</label>
+    <input type="text" id="saveCodeInput" />
+
+    <br><br>
+
     <button onclick="saveToFile()">Save</button>
+    <button onclick="saveCopy()">Save Copy</button>
+
     <br><br>
-    <textarea id="saveList" rows="10" cols="50"></textarea>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
+
+    <h2>History</h2>
+    <ul id="historyList"></ul>
+
+    <script>
+        let historyList = document.getElementById("historyList");
+
+        function saveToFile() {
+            let description = document.getElementById("descriptionInput").value;
+            let saveCode = document.getElementById("saveCodeInput").value;
+            let timestamp = new Date().toISOString();
+
+            let content = `${timestamp} - ${description} - ${saveCode}\n`;
+
+            // Check if file input is selected
+            let fileInput = document.getElementById("fileInput");
+            if (fileInput.files.length > 0) {
+                let file = fileInput.files[0];
+                let reader = new FileReader();
+
+                reader.onload = function (event) {
+                    // Append content to the existing file content
+                    let existingContent = event.target.result;
+                    content = existingContent + content;
+
+                    // Save the updated content to the file
+                    downloadFile(file.name, content);
+
+                    // Update history
+                    updateHistory(file.name);
+                };
+
+                reader.readAsText(file);
+            } else {
+                // No file selected, save new content to a new file
+                let fileName = `save_file_${timestamp}.txt`;
+                downloadFile(fileName, content);
+
+                // Update history
+                updateHistory(fileName);
+            }
+        }
+
+        function saveCopy() {
+            let description = document.getElementById("descriptionInput").value;
+            let saveCode = document.getElementById("saveCodeInput").value;
+            let timestamp = new Date().toISOString();
+            let fileName = `save_file_copy_${timestamp}.txt`;
+            let content = `${timestamp} - ${description} - ${saveCode}\n`;
+
+            // Save new content to a new file
+            downloadFile(fileName, content);
+
+            // Update history
+            updateHistory(fileName);
+        }
+
+        function downloadFile(fileName, content) {
+            let blob = new Blob([content], { type: "text/plain" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+
+        function updateHistory(fileName) {
+            let listItem = document.createElement("li");
+            listItem.textContent = fileName;
+            historyList.appendChild(listItem);
+        }
+    </script>
+
 </body>
 </html>
