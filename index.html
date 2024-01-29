@@ -56,10 +56,10 @@
 <body>
 
 <div class="container">
-    <h2>Save File App</h2>
+    <h2>Cookie Clicker Save Maker</h2>
 
-    <label for="fileInput">Select a File:</label>
-    <input type="file" id="fileInput" accept=".txt">
+    <label for="fileInput">Open a File:</label>
+    <input type="file" id="fileInput" accept=".ccsave">
 
     <label for="description">Description:</label>
     <input type="text" id="description">
@@ -68,13 +68,13 @@
     <input type="text" id="saveCode">
 
     <button onclick="appendToSaveFile()">Append to File</button>
-    <button onclick="saveCopy()">Save Copy</button>
-    <button class="show-code" onclick="toggleCodeDisplay()">Show/Hide Codes</button>
-
-    <h3>File Content:</h3>
-    <ul id="fileContent" style="display: none;"></ul>
+    <button onclick="saveCopy()">Save File</button>
+    <button class="show-code" onclick="toggleCodeDisplay()">Show/Hide History</button>
 
     <h3>History:</h3>
+    <ul id="fileContent" style="display: none;"></ul>
+
+    <h3>To be added:</h3>
     <ul id="historyList"></ul>
 </div>
 
@@ -109,7 +109,7 @@
     }
 
     function saveCopy() {
-        const filename = prompt('Enter a filename for the copy:', 'copy.txt');
+        const filename = prompt('Enter a filename for the copy:', 'copy.ccsave');
         if (filename) {
             const blob = new Blob([currentFileContent], { type: 'text/plain' });
             const link = document.createElement('a');
