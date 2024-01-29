@@ -3,102 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save File Editor</title>
+    <title>Save File Web App</title>
 </head>
 <body>
-
-    <h1>Save File Editor</h1>
-
-    <label for="fileInput">Select a file:</label>
-    <input type="file" id="fileInput" accept=".txt" />
-    
+    <h1>Save File Web App</h1>
+    <input type="file" id="fileInput" accept=".json">
+    <button onclick="loadFile()">Load File</button>
     <br><br>
-
-    <label for="descriptionInput">Description:</label>
-    <input type="text" id="descriptionInput" />
-
+    <label for="description">Description:</label>
+    <input type="text" id="description">
+    <br>
+    <label for="saveCode">Save File Code:</label>
+    <input type="text" id="saveCode">
     <br><br>
-
-    <label for="saveCodeInput">Save File Code:</label>
-    <input type="text" id="saveCodeInput" />
-
-    <br><br>
-
-    <button onclick="saveToFile()">Save</button>
+    <button onclick="saveData()">Save Data</button>
     <button onclick="saveCopy()">Save Copy</button>
 
-    <br><br>
-
-    <h2>History</h2>
-    <ul id="historyList"></ul>
-
     <script>
-        let historyList = document.getElementById("historyList");
+        let saveDataList = [];
 
-        function saveToFile() {
-            let description = document.getElementById("descriptionInput").value;
-            let saveCode = document.getElementById("saveCodeInput").value;
-            let timestamp = new Date().toISOString();
+        function loadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
 
-            let content = `${timestamp} - ${description} - ${saveCode}\n`;
+            if (file) {
+                const reader = new FileReader();
 
-            // Check if file input is selected
-            let fileInput = document.getElementById("fileInput");
-            if (fileInput.files.length > 0) {
-                let file = fileInput.files[0];
-                let reader = new FileReader();
-
-                reader.onload = function (event) {
-                    // Append content to the existing file content
-                    let existingContent = event.target.result;
-                    content = existingContent + content;
-
-                    // Save the updated content to the file
-                    downloadFile(file.name, content);
-
-                    // Update history
-                    updateHistory(file.name);
+                reader.onload = function (e) {
+                    const content = e.target.result;
+                    saveDataList = JSON.parse(content) || [];
+                    alert('File loaded successfully!');
                 };
 
                 reader.readAsText(file);
-            } else {
-                // No file selected, save new content to a new file
-                let fileName = `save_file_${timestamp}.txt`;
-                downloadFile(fileName, content);
+            }
+        }
 
-                // Update history
-                updateHistory(fileName);
+        function saveData() {
+            const description = document.getElementById('description').value;
+            const saveCode = document.getElementById('saveCode').value;
+            const timestamp = new Date().toLocaleString();
+
+            if (description && saveCode) {
+                const newData = { description, saveCode, timestamp };
+                saveDataList.push(newData);
+
+                saveToFile(saveDataList);
+                alert('Data saved successfully!');
+            } else {
+                alert('Please enter both description and save code.');
             }
         }
 
         function saveCopy() {
-            let description = document.getElementById("descriptionInput").value;
-            let saveCode = document.getElementById("saveCodeInput").value;
-            let timestamp = new Date().toISOString();
-            let fileName = `save_file_copy_${timestamp}.txt`;
-            let content = `${timestamp} - ${description} - ${saveCode}\n`;
+            const description = document.getElementById('description').value;
+            const saveCode = document.getElementById('saveCode').value;
+            const timestamp = new Date().toLocaleString();
 
-            // Save new content to a new file
-            downloadFile(fileName, content);
+            if (description && saveCode) {
+                const newData = { description, saveCode, timestamp };
+                const copyList = [...saveDataList, newData];
 
-            // Update history
-            updateHistory(fileName);
+                saveToFile(copyList);
+                alert('Copy saved successfully!');
+            } else {
+                alert('Please enter both description and save code.');
+            }
         }
 
-        function downloadFile(fileName, content) {
-            let blob = new Blob([content], { type: "text/plain" });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName;
-            link.click();
-        }
-
-        function updateHistory(fileName) {
-            let listItem = document.createElement("li");
-            listItem.textContent = fileName;
-            historyList.appendChild(listItem);
+        function saveToFile(data) {
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'savedata.json';
+            a.click();
         }
     </script>
-
 </body>
 </html>
