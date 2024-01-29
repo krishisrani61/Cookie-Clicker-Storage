@@ -3,81 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save File Web App</title>
+    <title>Save File App</title>
 </head>
 <body>
-    <h1>Save File Web App</h1>
-    <input type="file" id="fileInput" accept=".json">
-    <button onclick="loadFile()">Load File</button>
-    <br><br>
+
+    <h1>Save File App</h1>
+
     <label for="description">Description:</label>
     <input type="text" id="description">
-    <br>
+
     <label for="saveCode">Save File Code:</label>
     <input type="text" id="saveCode">
-    <br><br>
+
     <button onclick="saveData()">Save Data</button>
     <button onclick="saveCopy()">Save Copy</button>
 
+    <h2>History:</h2>
+    <ul id="historyList"></ul>
+
     <script>
-        let saveDataList = [];
-
-        function loadFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    const content = e.target.result;
-                    saveDataList = JSON.parse(content) || [];
-                    alert('File loaded successfully!');
-                };
-
-                reader.readAsText(file);
-            }
-        }
-
         function saveData() {
             const description = document.getElementById('description').value;
             const saveCode = document.getElementById('saveCode').value;
             const timestamp = new Date().toLocaleString();
 
-            if (description && saveCode) {
-                const newData = { description, saveCode, timestamp };
-                saveDataList.push(newData);
+            // Save data to a list (for display purposes)
+            const historyList = document.getElementById('historyList');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${timestamp} - ${description} (${saveCode})`;
+            historyList.appendChild(listItem);
 
-                saveToFile(saveDataList);
-                alert('Data saved successfully!');
-            } else {
-                alert('Please enter both description and save code.');
-            }
+            // Create or update the saved file on the user's computer
+            const data = `${timestamp} - ${description} (${saveCode})\n`;
+            saveToFile(data);
         }
 
         function saveCopy() {
-            const description = document.getElementById('description').value;
-            const saveCode = document.getElementById('saveCode').value;
-            const timestamp = new Date().toLocaleString();
-
-            if (description && saveCode) {
-                const newData = { description, saveCode, timestamp };
-                const copyList = [...saveDataList, newData];
-
-                saveToFile(copyList);
-                alert('Copy saved successfully!');
-            } else {
-                alert('Please enter both description and save code.');
-            }
+            // Create a copy of the current saved file
+            const data = readFile();
+            saveToFile(data, true);
         }
 
-        function saveToFile(data) {
-            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'savedata.json';
-            a.click();
+        function saveToFile(data, isCopy = false) {
+            const filename = isCopy ? 'savefile_copy.txt' : 'savefile.txt';
+            const blob = new Blob([data], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        function readFile() {
+            // Simulate reading the existing saved file content
+            // In a real-world scenario, you would use FileReader or fetch to read from the file
+            return "Existing content of savefile.txt\n";
         }
     </script>
+
 </body>
 </html>
