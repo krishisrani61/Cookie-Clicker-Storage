@@ -72,7 +72,7 @@
     <h2>Save File App</h2>
 
     <label for="fileInput">Select a File:</label>
-    <input type="file" id="fileInput" accept=".txt">
+    <input type="file" id="fileInput" accept=".ccsave">
 
     <label for="description">Description:</label>
     <input type="text" id="description">
@@ -122,7 +122,7 @@
     }
 
     function saveCopy() {
-        const filename = prompt('Enter a filename for the copy:', 'copy.txt');
+        const filename = prompt('Enter a filename for the copy:', 'copy.ccsave');
         if (filename) {
             const blob = new Blob([currentFileContent], { type: 'text/plain' });
             const link = document.createElement('a');
