@@ -7,52 +7,47 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-
         .container {
-            max-width: 600px;
-            margin: 50px auto;
             background-color: #fff;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         label {
             display: block;
             margin-top: 10px;
         }
-
         input, button {
             margin-top: 5px;
             padding: 8px;
             width: 100%;
             box-sizing: border-box;
         }
-
         button {
             background-color: #4caf50;
             color: #fff;
             cursor: pointer;
         }
-
-        button.toggle-code {
-            background-color: #3498db;
+        button.show-code {
+            margin-top: 10px;
+            background-color: #2196F3;
         }
-
         pre {
             white-space: pre-wrap;
-            word-wrap: break-word;
+            margin-top: 10px;
         }
-
         ul {
-            list-style: none;
+            list-style-type: none;
             padding: 0;
         }
-
         li {
             margin-bottom: 5px;
         }
@@ -74,7 +69,7 @@
 
     <button onclick="appendToSaveFile()">Append to File</button>
     <button onclick="saveCopy()">Save Copy</button>
-    <button class="toggle-code" onclick="toggleCode()">Toggle Code</button>
+    <button class="show-code" onclick="toggleCodeDisplay()">Show/Hide Codes</button>
 
     <h3>File Content:</h3>
     <ul id="fileContent" style="display: none;"></ul>
@@ -105,7 +100,7 @@
     function appendToSaveFile() {
         const description = document.getElementById('description').value;
         const saveCode = document.getElementById('saveCode').value;
-        const timestamp = new Date().toLocaleString();
+        const timestamp = new Date().toLocaleString(); // Use local time
         const newData = `${timestamp} - ${description} (${saveCode})`;
 
         currentFileContent += `<li>${newData}</li>`;
@@ -131,14 +126,13 @@
     function updateHistoryList(newData) {
         const historyList = document.getElementById('historyList');
         const listItem = document.createElement('li');
-        listItem.innerHTML = newData;
+        listItem.innerText = newData;
         historyList.appendChild(listItem);
     }
 
-    function toggleCode() {
+    function toggleCodeDisplay() {
         const fileContent = document.getElementById('fileContent');
-        const displayStyle = fileContent.style.display === 'none' ? 'block' : 'none';
-        fileContent.style.display = displayStyle;
+        fileContent.style.display = fileContent.style.display === 'none' ? 'block' : 'none';
     }
 </script>
 
