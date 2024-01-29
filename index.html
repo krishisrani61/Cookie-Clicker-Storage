@@ -4,10 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save File App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Save File App</h1>
+<div class="container">
+    <h2>Save File App</h2>
+
+    <label for="fileInput">Select a File:</label>
+    <input type="file" id="fileInput" accept=".txt">
 
     <label for="description">Description:</label>
     <input type="text" id="description">
@@ -15,50 +28,68 @@
     <label for="saveCode">Save File Code:</label>
     <input type="text" id="saveCode">
 
-    <button onclick="saveData()">Save Data</button>
+    <button onclick="appendToSaveFile()">Append to File</button>
     <button onclick="saveCopy()">Save Copy</button>
 
-    <h2>History:</h2>
+    <h3>File Content:</h3>
+    <pre id="fileContent"></pre>
+
+    <h3>History:</h3>
     <ul id="historyList"></ul>
+</div>
 
-    <script>
-        function saveData() {
-            const description = document.getElementById('description').value;
-            const saveCode = document.getElementById('saveCode').value;
-            const timestamp = new Date().toLocaleString();
+<script>
+    let currentFileContent = '';
 
-            // Save data to a list (for display purposes)
-            const historyList = document.getElementById('historyList');
-            const listItem = document.createElement('li');
-            listItem.textContent = `${timestamp} - ${description} (${saveCode})`;
-            historyList.appendChild(listItem);
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
-            // Create or update the saved file on the user's computer
-            const data = `${timestamp} - ${description} (${saveCode})\n`;
-            saveToFile(data);
+    function handleFileSelect(event) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                currentFileContent = e.target.result;
+                document.getElementById('fileContent').innerText = currentFileContent;
+            };
+            reader.readAsText(file);
         }
+    }
 
-        function saveCopy() {
-            // Create a copy of the current saved file
-            const data = readFile();
-            saveToFile(data, true);
-        }
+    function appendToSaveFile() {
+        const description = document.getElementById('description').value;
+        const saveCode = document.getElementById('saveCode').value;
+        const timestamp = new Date().toISOString();
+        const newData = `${timestamp} - ${description} (${saveCode})\n`;
 
-        function saveToFile(data, isCopy = false) {
-            const filename = isCopy ? 'savefile_copy.txt' : 'savefile.txt';
-            const blob = new Blob([data], { type: 'text/plain' });
+        currentFileContent += newData;
+        updateFileContent();
+        updateHistoryList(newData);
+    }
+
+    function saveCopy() {
+        const filename = prompt('Enter a filename for the copy:', 'copy.txt');
+        if (filename) {
+            const blob = new Blob([currentFileContent], { type: 'text/plain' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = filename;
             link.click();
         }
+    }
 
-        function readFile() {
-            // Simulate reading the existing saved file content
-            // In a real-world scenario, you would use FileReader or fetch to read from the file
-            return "Existing content of savefile.txt\n";
-        }
-    </script>
+    function updateFileContent() {
+        document.getElementById('fileContent').innerText = currentFileContent;
+    }
+
+    function updateHistoryList(newData) {
+        const historyList = document.getElementById('historyList');
+        const listItem = document.createElement('li');
+        listItem.innerText = newData;
+        historyList.appendChild(listItem);
+    }
+</script>
 
 </body>
 </html>
